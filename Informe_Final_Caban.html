@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+
+<html lang="es"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><title>Informe Consolidado – Assessment Odoo en Caban</title><script src="https://cdn.tailwindcss.com"></script><script src="https://cdn.jsdelivr.net/npm/chart.js"></script><script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script><style>
+body { font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; background-color:#f3f4f6; color:#1f2937; }
+.container { max-width: 1100px; margin: auto; }
+.section-card { background:#fff; border-radius:1rem; box-shadow:0 4px 12px rgba(0,0,0,.08); padding:1.25rem; }
+a.anchor { text-decoration:none; color:#4f46e5; }
+hr.sep { border:0; height:1px; background:linear-gradient(to right, transparent, #e5e7eb, transparent); margin:2rem 0; }
+
+/* === Paleta Dr. Odoo x Caban ===
+   Azul petróleo: #00242E
+   Turquesa medio: #179C9C
+   Turquesa claro: #50A8AC
+   Blanco azulado: #E6F5F5
+=================================*/
+:root{
+  --petroleo:#00242E;
+  --turquesa:#179C9C;
+  --turquesa-claro:#50A8AC;
+  --blanco-azulado:#E6F5F5;
+  --gray-ink:#1f2937;
+}
+/* Tono base y encabezados */
+body{ background: #f7fafc; color: var(--gray-ink); }
+h1,h2,h3{ color: var(--petroleo); }
+.section-card{ border-radius: 1rem; box-shadow: 0 8px 24px rgba(0,0,0,.06); }
+a.anchor{ color: var(--turquesa); }
+a.anchor:hover{ color: var(--turquesa-claro); }
+
+/* Cinta superior decorativa */
+.top-accent{
+  height: 6px;
+  background: linear-gradient(90deg,var(--petroleo),var(--turquesa),var(--turquesa-claro));
+  border-radius: 9999px;
+  margin-bottom: 1rem;
+}
+
+/* Nota de confidencialidad */
+.confidential{
+  background: var(--petroleo);
+  color: white;
+  border-top: 3px solid var(--turquesa);
+  padding: .75rem 1rem;
+  font-size: .9rem;
+}
+.confidential strong{ color: var(--blanco-azulado); }
+@media print{
+  .confidential{ position: fixed; bottom: 0; left: 0; right: 0; }
+}
+
+/* Resaltado específico del Plan 30-60-90 */
+#plan{
+  background: var(--blanco-azulado) !important;
+  border: 1px solid var(--turquesa-claro) !important;
+  box-shadow: 0 12px 24px rgba(0,36,46,.12) !important;
+}
+#plan h2{ color: var(--petroleo) !important; }
+#plan h3{ color: var(--petroleo) !important; }
+#plan .badge{
+  display:inline-block;
+  background: var(--turquesa);
+  color: white;
+  border-radius:9999px;
+  padding:.25rem .6rem;
+  font-size:.8rem;
+  margin-left:.5rem;
+}
+
+/* Tarjetas dentro del plan */
+#plan .bg-gray-50{
+  background: white !important;
+  border: 1px solid rgba(0,36,46,.08);
+  box-shadow: 0 4px 10px rgba(0,36,46,.06);
+}
+
+/* Separadores suaves */
+hr.sep{ background: linear-gradient(90deg,transparent,var(--turquesa-claro),transparent); }
+
+
+/* Ajuste solicitado: títulos y subtítulos en azul petróleo */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--petroleo) !important;
+}
+
+
+/* Banner de confidencialidad visible */
+.confidential-banner{
+  background: var(--petroleo, #00242E);
+  color: #ffffff;
+  border-bottom: 3px solid var(--turquesa, #179C9C);
+  padding: .6rem 1rem;
+  font-size: .9rem;
+}
+@media print{
+  .confidential-banner{
+    position: fixed; top:0; left:0; right:0;
+  }
+  body{ margin-top: 56px; }
+}
+
+/* Nota de confidencialidad al pie (para lectura y PDF) */
+.confidential{
+  background: var(--petroleo, #00242E);
+  color: #ffffff;
+  border-top: 3px solid var(--turquesa, #179C9C);
+  padding: .75rem 1rem;
+  font-size: .9rem;
+}
+.confidential strong, .confidential-banner strong{ color: var(--blanco-azulado, #E6F5F5); }
+
+
+/* === Componente Análisis y Conclusiones Clave=== */
+.analysis-card{
+  background: #ffffff;
+  border: 1px solid rgba(0,36,46,.1);
+  border-left: 6px solid var(--turquesa, #179C9C);
+  border-radius: 14px;
+  padding: 1rem 1.25rem 1.25rem 1.25rem;
+  box-shadow: 0 8px 18px rgba(0,36,46,.06);
+  margin-top: 1rem;
+}
+.analysis-card .title{
+  display:flex; align-items:center; gap:.6rem;
+  color: var(--petroleo, #00242E);
+  font-weight: 700; font-size: 1.1rem;
+  margin-bottom:.5rem;
+}
+.analysis-card .title svg{
+  width: 22px; height: 22px;
+  flex:0 0 22px;
+  stroke: var(--turquesa, #179C9C);
+  fill: none;
+  stroke-width: 2;
+}
+.analysis-card .subtitle{
+  color: var(--turquesa-claro, #50A8AC);
+  font-weight: 600; margin-top:.25rem; margin-bottom:.5rem;
+}
+.analysis-card ul{ margin-left: 1rem; list-style: disc; }
+.analysis-card li{ margin:.25rem 0; }
+
+</style></head><body><div class="container p-4 sm:p-8 space-y-8"><div class="top-accent"></div><header class="text-center space-y-2"><img alt="Dr. Odoo" src="Logo Dr Odoo v3 Vertical fondo transparente - cropped.png" style="float:right; max-height:64px; margin-left:12px;"/><h1 class="sm:text-4xl font-extrabold tracking-tight text-indigo-800 text-4xl" id="informe-consolidado-assessment-odoo-en-caban">Informe Consolidado – Assessment Odoo en Caban</h1><p>Documento elaborado en el marco del servicio Dr. Odoo – Plan de Rescate (Rediseño de Estrategia)</p></header><nav class="section-card"><h2 class="text-xl font-semibold mb-3 text-indigo-700 text-3xl">Contenido</h2><ol class="list-decimal list-inside space-y-1"><li><a class="anchor" href="#informe-consolidado-assessment-odoo-en-caban">Informe Consolidado – Assessment Odoo en Caban</a></li><li><a class="anchor" href="#plan-30-60-90-y-kpis-sugeridos">Plan 30-60-90 y KPIs sugeridos</a></li><li><a class="anchor" href="#anexo-1-matriz-de-hallazgos-de-entrevistas">Anexo 1: Matriz de Hallazgos de Entrevistas</a></li><li><a class="anchor" href="#anexo-2-an-lisis-del-backlog-actual">Anexo 2: Análisis del Backlog Actual</a></li><li><a class="anchor" href="#anexo-3-dashboard-del-backlog">Anexo 3: Dashboard del Backlog</a></li><li><a class="anchor" href="#anexo-4-dashboard-de-encuestas">Anexo 4: Dashboard de Encuestas</a></li></ol></nav><div class="section-card"><section class="space-y-6" id="informe"><h2 class="sm:text-3xl font-bold text-indigo-700 text-3xl">Informe Completo de Assessment</h2><div class="container mx-auto px-4 py-8">
+<div class="mb-8">
+<h2 class="font-semibold mb-4 text-indigo-700 text-3xl">Resumen Ejecutivo</h2>
+<p class="text-gray-700 leading-relaxed">
+                El presente informe consolida los hallazgos de la evaluación del proyecto de implementación de Odoo en Caban Systems. El análisis revela que, a pesar de los esfuerzos, el proyecto se encuentra estancado y con un bajo nivel de adopción por parte de los usuarios clave. Las expectativas iniciales, centradas en la automatización y la centralización de la información, no se han materializado en áreas críticas como Finanzas y Operaciones.
+            </p>
+<p class="mt-4 text-gray-700 leading-relaxed">
+                La causa raíz de este estancamiento se identifica en tres áreas principales: la falta de un líder de proyecto interno con dedicación exclusiva (Product Owner), una comunicación fragmentada que genera cuellos de botella y un backlog desorganizado que no refleja las necesidades de negocio más urgentes.
+            </p>
+<p class="mt-4 text-gray-700 leading-relaxed">
+                El plan de acción propuesto en este informe se centra en la reactivación inmediata del proyecto, con un enfoque en la re-alineación de las partes interesadas, la priorización de los flujos de negocio de Finanzas y Contabilidad, y el establecimiento de una nueva metodología de trabajo que garantice la transparencia y el progreso.
+            </p>
+</div>
+<div class="mb-8">
+<h2 class="font-semibold mb-4 text-indigo-700 text-3xl">Metodología</h2>
+<p class="text-gray-700 leading-relaxed">
+                El <em>assessment</em> se realizó siguiendo la metodología <strong>Dr. Odoo™</strong>, que se compone de cuatro fases principales, ejecutadas durante un período de dos semanas:
+            </p>
+<ol class="list-decimal list-inside text-gray-700 leading-relaxed mt-4">
+<li><strong>Ingreso Clínico:</strong> Alineación de expectativas, solicitud de accesos y recopilación de contexto organizacional para generar un entorno de colaboración.</li>
+<li><strong>Examen Profundo:</strong> Obtención de información completa a través de entrevistas estructuradas (líderes, usuarios clave, partner) y revisión documental del proyecto.</li>
+<li><strong>Diagnóstico Integral:</strong> Consolidación de todos los hallazgos para identificar las causas raíz, buscar patrones y evaluar la madurez organizacional del cliente.</li>
+<li><strong>Prescripción Estratégica:</strong> Elaboración de un informe final con recomendaciones claras y una hoja de ruta priorizada para los próximos pasos.</li>
+</ol>
+</div>
+<div class="mb-8">
+<h2 class="font-semibold mb-4 text-indigo-700 text-3xl">Hallazgos Clave</h2>
+<h3 class="text-xl font-semibold mb-2 text-indigo-600 text-2xl">1. Desalineación de Expectativas y Brechas Funcionales</h3>
+<ul class="list-disc list-inside text-gray-700 leading-relaxed">
+<li><strong>Bajo Nivel de Cumplimiento:</strong> Los usuarios de Inventarios y Tesorería reportaron que ninguno de los objetivos iniciales de automatización se ha cumplido.</li>
+<li><strong>Tesorería y Pagos:</strong> Se siguen utilizando archivos planos de Siigo y hojas de cálculo de Excel. La depreciación de activos no se ha automatizado como se esperaba.</li>
+<li><strong>Inventario y Proyectos:</strong> La percepción es que el módulo está "crudo" y no se ha logrado la centralización de procesos.</li>
+<li><strong>Ventas y CRM:</strong> El <em>reporting</em> es percibido como "no muy amigable" y "no existente", y no está conectado a los demás módulos, lo que impide generar informes para la junta directiva.</li>
+<li><strong>Compras:</strong> Se considera que el sistema no ha aportado valor más allá de tener un historial de órdenes de compra (POs), y los usuarios no pueden ver el estado de sus órdenes.</li>
+</ul>
+</div>
+<div class="mb-8">
+<h3 class="text-xl font-semibold mb-2 text-indigo-600 text-2xl">2. Problemas de Comunicación y Gobernanza</h3>
+<ul class="list-disc list-inside text-gray-700 leading-relaxed">
+<li><strong>Cuello de Botella:</strong> La comunicación con el partner se centraliza a través de un único interlocutor (Andrés), lo que retrasa las respuestas y la resolución de problemas para el resto del equipo.</li>
+<li><strong>Falta de Acompañamiento:</strong> Los usuarios nuevos no han recibido un <em>onboarding</em> adecuado ni reuniones de seguimiento, lo que genera frustración y bajo uso del sistema.</li>
+<li><strong>Interacción Limitada:</strong> Algunos equipos, como el de Autogestión B2B, no han tenido contacto directo ni con el equipo interno del proyecto ni con el partner, lo que limita su capacidad para participar.</li>
+<li><strong>Relación con el Partner:</strong> La comunicación se percibe como escueta y frustrante. Un usuario menciona que la interacción con el partner se limita a una persona ("Clair") y que solo responde por módulo.</li>
+</ul>
+</div>
+<div class="mb-8">
+<h3 class="text-xl font-semibold mb-2 text-indigo-600 text-2xl">3. Backlog de Proyecto Disfuncional</h3>
+<ul class="list-disc list-inside text-gray-700 leading-relaxed">
+<li><strong>Sin Priorización Real:</strong> A pesar de la existencia de un backlog, este no refleja los dolores de negocio urgentes en Finanzas y Contabilidad.</li>
+<li><strong>Foco Desviado:</strong> Se ha consumido tiempo en tareas de bajo impacto, como la migración de bases de datos o el desarrollo de activos, sin resolver los procesos manuales que afectan el día a día.</li>
+<li><strong>Ausencia de Flujos E2E:</strong> Aunque existen tareas individuales, no se observan flujos de extremo a extremo consolidados o priorizados, como el proceso completo de una orden de compra hasta su registro contable y pago.</li>
+<li><strong>Desglose Insuficiente:</strong> Tareas como "configuración de impuestos" o "localización de Paraguay" no están desglosadas en subtareas más pequeñas, lo que impide un seguimiento preciso del progreso.</li>
+</ul>
+</div>
+<div class="mb-8">
+<h2 class="font-semibold mb-4 text-indigo-700 text-3xl">Análisis de Causas Raíz</h2>
+<p class="text-gray-700 leading-relaxed mb-4">
+                Los síntomas de frustración, falta de adopción y brechas funcionales observados en Caban no son problemas aislados, sino manifestaciones de fallas estructurales en la metodología, la gestión y la comunicación del proyecto. A continuación, se identifican las causas raíz que explican los hallazgos del diagnóstico.
+            </p>
+<h3 class="text-xl font-semibold mb-2 text-indigo-600 text-2xl">1. Falta de un Liderazgo Interno con Dedicación Exclusiva</h3>
+<p class="text-gray-700 leading-relaxed">
+                El proyecto carece de un <strong>Product Owner</strong> formalmente designado por la Alta Dirección con autoridad y tiempo dedicado. Esto ha resultado en una falta de claridad, una participación baja o nula de los usuarios clave y una percepción interna de que el proyecto es algo del área de Finanzas y no de toda la empresa.
+            </p>
+<h3 class="text-xl font-semibold mt-4 mb-2 text-indigo-600 text-2xl">2. Gobernanza de Proyecto Débil y Comunicación Deficiente</h3>
+<p class="text-gray-700 leading-relaxed">
+                Existe una falla crítica en la comunicación entre el partner y los usuarios clave de Caban. Esta desconexión es el origen de la mayoría de las frustraciones culturales. La comunicación es escueta y no es proactiva, lo que genera un silo de información y hace que las solicitudes se queden sin respuestas claras.
+            </p>
+<h3 class="text-xl font-semibold mt-4 mb-2 text-indigo-600 text-2xl">3. Backlog Desorganizado y Sin Enfoque Estratégico</h3>
+<p class="text-gray-700 leading-relaxed">
+                El <em>backlog</em>, a pesar de existir, no está alineado con las necesidades del negocio. El hecho de que los pendientes discutidos en las reuniones no se reflejen en el backlog genera desconfianza y la percepción de que el trabajo no avanza. Se ha invertido tiempo en tareas de bajo impacto sin resolver los dolores urgentes de Finanzas y Contabilidad.
+            </p>
+</div>
+<div class="my-8">
+<h2 class="font-semibold mb-4 text-indigo-700 text-center text-3xl">Matriz de Valor vs. Esfuerzo</h2>
+<div class="chart-container">
+<canvas id="effortValueChart"></canvas>
+</div>
+</div>
+<div class="mb-8">
+<h2 class="font-semibold mb-4 text-indigo-700 text-3xl">Recomendaciones y Plan de Acción</h2>
+<p class="text-gray-700 leading-relaxed mb-4">
+                Basado en el análisis de las causas raíz, se propone un plan de acción en fases que busca reorientar el proyecto y lograr resultados tangibles en el corto plazo.
+            </p>
+<div class="overflow-x-auto rounded-lg shadow">
+<table class="min-w-full bg-white">
+<thead>
+<tr>
+<th class="py-3 px-6 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider border-b-2 border-gray-200">Fase</th>
+<th class="py-3 px-6 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider border-b-2 border-gray-200">Duración</th>
+<th class="py-3 px-6 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider border-b-2 border-gray-200">Hitos Clave</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-gray-200">
+<tr>
+<td class="py-4 px-6 whitespace-nowrap">1. Diagnóstico<br/><span class="text-xs text-gray-500">(Ya concluido)</span></td>
+<td class="py-4 px-6 whitespace-nowrap">2 semanas</td>
+<td class="py-4 px-6">Entrevistas, análisis de documentos y sistema.</td>
+</tr>
+<tr>
+<td class="py-4 px-6 whitespace-nowrap">2. Activación<br/><span class="text-xs text-gray-500">(Inmediato)</span></td>
+<td class="py-4 px-6 whitespace-nowrap">1 día</td>
+<td class="py-4 px-6"><strong>Nombramiento Formal del Product Owner:</strong> La Alta Dirección designa a un líder de proyecto con autoridad y tiempo.</td>
+</tr>
+<tr>
+<td class="py-4 px-6 whitespace-nowrap">3. Re-alineación<br/><span class="text-xs text-gray-500">(1 Semana)</span></td>
+<td class="py-4 px-6 whitespace-nowrap">1 semana</td>
+<td class="py-4 px-6"><strong>Taller de Backlog con el Partner:</strong> Revisión y depuración de tareas, con un enfoque exclusivo en los módulos de Contabilidad y Finanzas.</td>
+</tr>
+<tr>
+<td class="py-4 px-6 whitespace-nowrap">4. Ejecución<br/><span class="text-xs text-gray-500">(4+ Semanas)</span></td>
+<td class="py-4 px-6 whitespace-nowrap">4+ semanas</td>
+<td class="py-4 px-6"><strong>Ejecución del Plan:</strong><br/>- Iniciar el despliegue de Finanzas.<br/>- Sesiones de trabajo con los <em>champions</em> en horarios protegidos.<br/>- Definir reportes clave.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="mb-8">
+<section class="section-card space-y-4 bg-white border border-gray-200 rounded-xl shadow-sm p-4 md:p-6 mb-8" id="plan"><h2 class="text-3xl font-bold mt-8 mb-4 tracking-tight mt-4" id="plan-30-60-90-y-kpis-sugeridos">Plan 30-60-90 y KPIs sugeridos <span class="badge">Enfoque Clave</span></h2><p class="text-gray-700">Propuesta táctica para reactivar el proyecto y medir avances de forma objetiva. Estos hitos están alineados con el diagnóstico y priorizan Finanzas/Contabilidad y flujo de Compras.</p><div class="grid grid-cols-1 md:grid-cols-3 gap-4"><div class="bg-gray-50 rounded-lg p-4 border border-gray-200"><h3 class="text-lg font-semibold text-gray-800 mb-2 text-2xl">Primeros 30 días</h3><ul class="list-disc list-inside text-gray-700 space-y-1"><li>Nombrar formalmente Product Owner con 50–100% de dedicación y autoridad de decisión</li><li>Taller de depuración y priorización del backlog (solo Finanzas/Compras) con criterios de valor/esfuerzo</li><li>Definir tres flujos E2E priorizados: PO→Recepción→Factura→Pago; Ventas→Factura; Depreciaciones/Activos</li><li>Acordar calendario de ceremonias (weekly de ejecución; quincenal de steering) con minutas y due dates</li></ul></div><div class="bg-gray-50 rounded-lg p-4 border border-gray-200"><h3 class="text-lg font-semibold text-gray-800 mb-2 text-2xl">Días 31–60</h3><ul class="list-disc list-inside text-gray-700 space-y-1"><li>Implementar flujo E2E de Compras a Pago en entorno productivo con 1 área piloto</li><li>Eliminar uso de archivos planos en tesorería (automatizar cargas y validaciones)</li><li>Tablero operativo diario (backlog, bloqueos, SLA, throughput) y burndown por flujo</li><li>Plan de onboarding para usuarios nuevos y refresher para champions</li></ul></div><div class="bg-gray-50 rounded-lg p-4 border border-gray-200"><h3 class="text-lg font-semibold text-gray-800 mb-2 text-2xl">Días 61–90</h3><ul class="list-disc list-inside text-gray-700 space-y-1"><li>Expandir flujo E2E a toda la organización y cerrar brechas contables</li><li>Definir y publicar 5–7 reportes/KPIs ejecutivos conectados a Odoo</li><li>Retrofit del backlog: solo ítems trazables a un flujo E2E o KPI de valor</li><li>Acuerdo de mantenimiento (SLA, RACI con partner, cadencia de mejoras)</li></ul></div></div><h3 class="text-lg font-semibold text-gray-800 text-2xl">KPIs ejecutivos propuestos</h3><ul class="list-disc list-inside text-gray-700 space-y-1"><li>Throughput semanal (tareas terminadas) y WIP por flujo E2E</li><li>Lead time de PO→Pago y % de POs con trazabilidad completa</li><li>% automatización de conciliaciones/cargas vs. manual</li><li>Errores por carga (por 100 transacciones) y tiempo medio de resolución (MTTR)</li><li>Adopción: usuarios activos/semana y tiempo en sistema por rol</li><li>Satisfacción por área (encuesta NPS interna mensual)</li></ul></section><h2 class="font-semibold mb-4 text-indigo-700 text-3xl">Anexos</h2>
+<hr class="my-10 border-t border-gray-200"/><h2 class="text-3xl font-bold text-indigo-700 mt-8 mb-4 tracking-tight" id="anexo-1-matriz-de-hallazgos-de-entrevistas">Anexo 1: Matriz de Hallazgos de Entrevistas</h2>
+<p class="text-gray-700 leading-relaxed mb-4">
+                Esta matriz sintetiza las perspectivas de los principales actores del proyecto Odoo, incluyendo usuarios clave, líderes de área y el partner de implementación.
+            </p>
+<div class="overflow-x-auto rounded-lg shadow">
+<table class="min-w-full bg-white">
+<thead>
+<tr>
+<th class="py-3 px-6 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider border-b-2 border-gray-200">Entrevistado/Área</th>
+<th class="py-3 px-6 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider border-b-2 border-gray-200">Expectativas/Visión</th>
+<th class="py-3 px-6 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider border-b-2 border-gray-200">Dolor/Problemas</th>
+<th class="py-3 px-6 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider border-b-2 border-gray-200">Comunicación</th>
+<th class="py-3 px-6 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider border-b-2 border-gray-200">Riesgos/Recomendaciones</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-gray-200">
+<tr>
+<td class="py-4 px-6 align-top"><strong>Harvin y Patricia</strong><br/><span class="text-sm text-gray-500">(Ventas/CRM)</span></td>
+<td class="py-4 px-6 align-top">Odoo como única y fidedigna fuente de información.</td>
+<td class="py-4 px-6 align-top">Reportería inexistente, no conectado con otros módulos.</td>
+<td class="py-4 px-6 align-top">Esporádica con el partner. La comunicación con el equipo de proyecto fue mejor.</td>
+<td class="py-4 px-6 align-top">Falta un roadmap de migración contable. La compañía no ve el proyecto como algo de toda la empresa.</td>
+</tr>
+<tr>
+<td class="py-4 px-6 align-top"><strong>Camilo y Néstor</strong><br/><span class="text-sm text-gray-500">(Inventarios/Manufactura)</span></td>
+<td class="py-4 px-6 align-top">Optimizar procesos, automatizar depreciaciones/amortizaciones.</td>
+<td class="py-4 px-6 align-top">Ningún objetivo se ha cumplido. Dependencia de procesos manuales en Excel.</td>
+<td class="py-4 px-6 align-top">La comunicación es a través de un único interlocutor (Andrés), lo que crea un cuello de botella.</td>
+<td class="py-4 px-6 align-top">No se han sincerado las expectativas. Es necesario un mayor acompañamiento.</td>
+</tr>
+<tr>
+<td class="py-4 px-6 align-top"><strong>Laura</strong><br/><span class="text-sm text-gray-500">(Compras)</span></td>
+<td class="py-4 px-6 align-top">Automatizar todo el ciclo de compras y controlar los datos para análisis posteriores.</td>
+<td class="py-4 px-6 align-top">No saber el estado de una orden de compra. Licencias se cobran por EE. UU. (problema de licenciamiento).</td>
+<td class="py-4 px-6 align-top">El partner (Clair) solo contesta por Odoo y no directamente a todos los usuarios.</td>
+<td class="py-4 px-6 align-top">Tiempos de respuesta lentos del partner. Necesidad de un `showcase` del ciclo de compras completo.</td>
+</tr>
+<tr>
+<td class="py-4 px-6 align-top"><strong>Diana y Fernanda</strong><br/><span class="text-sm text-gray-500">(Tesorería y Pagos)</span></td>
+<td class="py-4 px-6 align-top">Automatizar procesos contables, evitar carga manual de archivos planos.</td>
+<td class="py-4 px-6 align-top">Errores en la carga de archivos. No hay un <em>onboarding</em> ni reuniones internas.</td>
+<td class="py-4 px-6 align-top">No han tenido contacto ni reuniones internas sobre el ERP.</td>
+<td class="py-4 px-6 align-top">Es necesario un plan de <em>onboarding</em> para los nuevos usuarios.</td>
+</tr>
+<tr>
+<td class="py-4 px-6 align-top"><strong>Jairo, Yuly y John</strong><br/><span class="text-sm text-gray-500">(Autogestión B2B)</span></td>
+<td class="py-4 px-6 align-top">Controlar el registro de gastos y salir de la manualidad.</td>
+<td class="py-4 px-6 align-top">Falta de interacción con el proyecto. La frustración de usar múltiples herramientas.</td>
+<td class="py-4 px-6 align-top">Citan a ciertas personas, pero a otras no.</td>
+<td class="py-4 px-6 align-top">Se necesita una mejor comunicación interna y definir quién manejará qué para poder interactuar.</td>
+</tr>
+<tr>
+<td class="py-4 px-6 align-top"><strong>Partner (Dooit)</strong></td>
+<td class="py-4 px-6 align-top">Ayudar en la transformación digital de Caban.</td>
+<td class="py-4 px-6 align-top">Proceso de transformación lento por las costumbres manuales del cliente. Involucramiento limitado de los `champions`.</td>
+<td class="py-4 px-6 align-top">Perciben una falta de claridad y un `backlog` desorganizado del lado de Caban.</td>
+<td class="py-4 px-6 align-top">El riesgo principal es que los usuarios clave no tengan tiempo. La solución es involucrarlos más.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="my-8">
+<h2 class="font-semibold mb-4 text-indigo-700 text-center text-3xl">Nivel de Satisfacción por Área</h2>
+<div class="chart-container">
+<canvas id="satisfactionChart"></canvas>
+</div>
+</div>
+<div class="mb-8">
+<h2 class="text-3xl font-bold text-indigo-700 mt-8 mb-4 tracking-tight" id="anexo-2-an-lisis-del-backlog-actual">Anexo 2: Análisis del Backlog Actual</h2>
+<p class="text-gray-700 leading-relaxed">
+                El backlog del proveedor, a pesar de contener una lista de tareas, carece de la granularidad y priorización necesarias para un avance efectivo. La mayoría de las tareas son genéricas o de alto nivel, lo que dificulta el seguimiento.
+            </p>
+<ul class="list-disc list-inside text-gray-700 leading-relaxed mt-4">
+<li><strong>Estado:</strong> La última actualización visible del backlog data de hace varias semanas, lo que sugiere que no se está utilizando como una herramienta de seguimiento activa.</li>
+<li><strong>Foco Desviado:</strong> El backlog contiene tareas relacionadas con licencias, migración de bases de datos y desarrollo de activos. Estas tareas consumieron tiempo y recursos sin resolver los dolores de negocio urgentes en Finanzas y Contabilidad.</li>
+<li><strong>Ausencia de Flujos E2E:</strong> Aunque existen tareas individuales, no se observan flujos de extremo a extremo consolidados o priorizados, como el proceso completo de una orden de compra hasta su registro contable y pago.</li>
+<li><strong>Desglose Insuficiente:</strong> Tareas como "configuración de impuestos" o "localización de Paraguay" no están desglosadas en subtareas más pequeñas, lo que impide un seguimiento preciso del progreso.</li>
+</ul>
+</div>
+</div><h2 class="text-3xl font-bold text-indigo-700 mt-8 mb-4 tracking-tight" id="anexo-3-dashboard-del-backlog">Anexo 3: Dashboard del Backlog</h2><div class="mx-auto bg-white p-6 sm:p-8 rounded-xl shadow-lg space-y-12 max-w-6xl px-4" id="backlog">
+<p class="text-center text-gray-500 mb-8">
+            Estado del backlog por estado, área y evolución temporal, basado en la información del proveedor y las entrevistas.
+        </p>
+<!-- KPI Strip -->
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
+<div class="bg-indigo-50 p-6 rounded-xl shadow-md border-t-4 border-indigo-400">
+<p class="text-lg text-gray-600">Tareas Pendientes</p>
+<p class="text-4xl font-bold text-indigo-700">12</p>
+</div>
+<div class="bg-indigo-50 p-6 rounded-xl shadow-md border-t-4 border-indigo-400">
+<p class="text-lg text-gray-600">Tareas Bloqueadas</p>
+<p class="text-4xl font-bold text-red-600">10</p>
+</div>
+<div class="bg-indigo-50 p-6 rounded-xl shadow-md border-t-4 border-indigo-400">
+<p class="text-lg text-gray-600">Tareas Estancadas</p>
+<p class="text-4xl font-bold text-amber-500">25</p>
+</div>
+</div>
+<!-- Charts Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<!-- Chart Estado -->
+<div class="bg-gray-50 p-4 rounded-lg shadow-inner flex flex-col items-center">
+<h2 class="text-xl font-semibold mb-4 text-gray-800 text-3xl">Distribución de Tareas por Estado</h2>
+<div class="w-full flex justify-center">
+<canvas class="max-w-xs" id="chartEstado"></canvas>
+</div>
+</div>
+<!-- Chart Área -->
+<div class="bg-gray-50 p-4 rounded-lg shadow-inner">
+<h2 class="text-xl font-semibold mb-4 text-gray-800 text-3xl">Tareas por Área Funcional</h2>
+<canvas id="chartArea"></canvas>
+</div>
+</div>
+<!-- Chart Timeline -->
+<div class="bg-gray-50 p-4 rounded-lg shadow-inner">
+<h2 class="text-xl font-semibold mb-4 text-gray-800 text-3xl">Evolución Acumulada del Backlog</h2>
+<canvas id="chartTimeline"></canvas>
+</div>
+<!-- Analysis & Conclusion -->
+<div class="bg-indigo-50 border-l-4 border-indigo-400 rounded-lg p-6 mt-8">
+<h2 class="font-bold text-indigo-700 mb-4 flex items-center text-3xl">
+<svg class="h-8 w-8 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M9 12l2 2 4-4m5.618-4.276a11.952 11.952 0 01-1.29 4.35 11.952 11.952 0 01-4.35 1.29A11.952 11.952 0 0112 22c-3.18 0-6.18-1.04-8.618-2.876a11.952 11.952 0 01-1.29-4.35 11.952 11.952 0 014.35-1.29A11.952 11.952 0 0112 2c3.18 0 6.18 1.04 8.618 2.876z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+                Análisis y Conclusiones Clave</h2>
+<p class="mb-4 text-gray-700">
+                La data confirma que el proyecto está en un estado de <strong>estancamiento profundo</strong>. Los problemas reportados en las entrevistas no son aislados, sino que son <strong>patrones sistémicos</strong> que se manifiestan en la data del backlog. La falta de progreso es particularmente visible en áreas críticas.
+            </p>
+<ul class="list-disc list-inside text-gray-700 space-y-3">
+<li>
+<strong>Distribución por Área:</strong> El backlog se concentra principalmente en los módulos más críticos para la operación diaria: <strong>Finanzas</strong>, <strong>Compras/Inventario</strong> y <strong>Ventas/CRM</strong>, lo que demuestra que los principales cuellos de botella se encuentran en el corazón de la empresa.
+                </li>
+<li>
+<strong>Distribución por Estado:</strong> Los estados con mayor presencia son <strong>Pendiente</strong> y <strong>Estancado</strong> frente a un porcentaje mínimo de tareas <strong>Finalizadas</strong>. Esto visualiza la falta de resolución y el bloqueo que los equipos experimentan día a día, como se confirmó en las entrevistas.
+                </li>
+<li>
+<strong>Evolución del Proyecto:</strong> La evolución mensual muestra que hubo actividad en 10 meses, pero la curva de avance se ha aplanado. Esto evidencia que el proyecto <strong>perdió pulso</strong>, a pesar de que el backlog sigue creciendo, lo que indica una falta de gestión y de resultados palpables.
+                </li>
+<li>
+<strong>Falta de Reportes y Visibilidad:</strong> Los usuarios de <strong>Ventas</strong> sienten que el "reporting no es muy friendly, non existent". El pie chart lo valida, mostrando que un gran porcentaje de las tareas están estancadas sin avance claro. El bar chart muestra que hay muchas tareas en su área que no se están moviendo.
+                </li>
+<li>
+<strong>Desconexión y Frustración:</strong> Las entrevistas en <strong>Compras</strong> revelan una gran frustración por "no saber el estado de una orden de compra". Esto se refleja en el alto número de tareas bloqueadas, que impide la visibilidad y el avance.
+                </li>
+<li>
+<strong>Cuello de Botella Contable:</strong> La urgencia de dejar de usar Siigo se evidencia en la entrevista de <strong>Tesorería</strong>, que describe la "frustración por la carga de archivos planos". Esto explica por qué el área de Contabilidad/Finanzas tiene el mayor número de tareas y representa un riesgo crítico, como menciona la CFO: "no tenerlo listo este año [2024]".
+                </li>
+<li>
+<strong>Comunicación Ineficiente:</strong> El chart de línea muestra que el progreso se estancó drásticamente después de la fase de inicio. Esto se alinea con lo que mencionan varios entrevistados sobre la falta de "un plan de trabajo concreto" y la comunicación "esporádica con el partner".
+                </li>
+</ul>
+</div>
+</div><h2 class="text-3xl font-bold text-indigo-700 mt-8 mb-4 tracking-tight" id="anexo-4-dashboard-de-encuestas">Anexo 4: Dashboard de Encuestas</h2><div class="mx-auto bg-white p-6 sm:p-8 rounded-xl shadow-lg max-w-6xl px-4" id="encuestas">
+<p class="text-center text-gray-500 mb-8">Análisis de los datos de la encuesta y las entrevistas a stakeholders clave.</p>
+<!-- Sección de Análisis de Encuestas -->
+<div class="mb-12">
+<h2 class="font-bold text-gray-800 mb-6 border-b-2 border-indigo-200 pb-2 text-3xl">Análisis de la Encuesta de Contexto</h2>
+<div class="flex flex-col md:flex-row gap-8 mb-8">
+<!-- Gráfico de barras -->
+<div class="w-full md:w-1/2 bg-gray-50 p-4 rounded-lg shadow-inner">
+<h3 class="text-xl font-semibold mb-4 text-center text-2xl">Respuestas por Hora del Día</h3>
+<canvas id="timeChart"></canvas>
+</div>
+<!-- Gráfico de línea acumulativo -->
+<div class="w-full md:w-1/2 bg-gray-50 p-4 rounded-lg shadow-inner">
+<h3 class="text-xl font-semibold mb-4 text-center text-2xl">Respuestas Acumulativas por Hora</h3>
+<canvas id="cumulativeChart"></canvas>
+</div>
+</div>
+<!-- Gráfico circular -->
+<div class="w-full bg-gray-50 p-4 rounded-lg shadow-inner flex flex-col justify-center">
+<h3 class="text-xl font-semibold mb-4 text-center text-2xl">Tasa de Participación</h3>
+<canvas class="max-h-[300px]" id="participationChart"></canvas>
+</div>
+</div>
+<!-- Sección de Análisis de Entrevistas -->
+<div>
+<h2 class="font-bold text-gray-800 mb-6 border-b-2 border-indigo-200 pb-2 text-3xl">Percepción del Proyecto por Área (Entrevistas)</h2>
+<!-- Gráfico de radar -->
+<div class="bg-gray-50 p-6 rounded-lg shadow-inner mb-8">
+<h3 class="text-xl font-semibold mb-4 text-center text-2xl">Gráfico de Radar: Visión de los Stakeholders</h3>
+<canvas id="radarChart" style="display:none;"></canvas><p class="text-center text-gray-500 mt-2">Nota: El gráfico de radar se ocultó por compatibilidad; se muestra una alternativa comparativa a continuación.</p>
+</div><div class="bg-gray-50 p-4 rounded-lg shadow-inner mt-6"><h3 class="text-xl font-semibold mb-4 text-center text-2xl">Comparativo de Percepciones (Partner vs Promedio Áreas)</h3><canvas id="stakeholderCompareChart"></canvas></div>
+<div class="bg-indigo-50 border-l-4 border-indigo-400 rounded-lg p-4 mt-8">
+<h3 class="text-lg font-semibold text-indigo-700 flex items-center mb-2 text-2xl">
+<svg class="h-6 w-6 mr-2" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+                    Análisis y Conclusiones Clave</h3>
+<ul class="list-disc list-inside text-gray-700 space-y-2">
+<li>La alta tasa de participación en la encuesta (68%) combinada con la concentración de respuestas fuera del horario laboral, sugiere un alto interés y compromiso con el proyecto, a pesar de las limitaciones de tiempo.</li>
+<li>El análisis cualitativo del gráfico de radar revela una percepción baja y consistente en todas las áreas de la empresa en cuanto a la comunicación, el valor percibido y la resolución de problemas.</li>
+<li>La percepción más positiva proviene del partner, lo que indica un posible desacoplamiento entre las expectativas de los usuarios finales y los objetivos del equipo de implementación.</li>
+<li>La combinación de estos datos sugiere que existe una oportunidad significativa para mejorar la comunicación, establecer un plan de acción claro y visible, y alinear las expectativas de todos los stakeholders para asegurar el éxito del proyecto.</li>
+</ul>
+</div>
+</div>
+</div></section></div><hr class="sep"/><hr class="sep"/><hr class="sep"/></div><script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const effortValueData = {
+                datasets: [
+                    {
+                        label: 'Impacto de Tareas del Proyecto',
+                        data: [
+                            { x: 8, y: 2, label: 'Reporting & KPIs (Ventas)' },
+                            { x: 9, y: 1, label: 'Comunicación con Partner' },
+                            { x: 3, y: 7, label: 'Onboarding de Usuarios Nuevos' },
+                            { x: 10, y: 9, label: 'Migración Completa de Contabilidad' },
+                            { x: 2, y: 8, label: 'Automatización de Pagos' },
+                            { x: 7, y: 3, label: 'Revisión de Flujo de Compras' },
+                            { x: 6, y: 5, label: 'Integración de Inventarios' }
+                        ],
+                        backgroundColor: 'rgba(59, 130, 246, 0.7)',
+                        borderColor: 'rgba(30, 64, 175, 1)',
+                        pointRadius: 8,
+                        pointHoverRadius: 10,
+                    }
+                ]
+            };
+
+            const effortValueChart = new Chart(document.getElementById('effortValueChart'), {
+                type: 'scatter',
+                data: effortValueData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            position: 'bottom',
+                            min: 0,
+                            max: 10,
+                            title: {
+                                display: true,
+                                text: 'Esfuerzo (Complejidad/Tiempo)'
+                            },
+                            grid: {
+                                color: 'rgba(209, 213, 219, 0.5)'
+                            }
+                        },
+                        y: {
+                            type: 'linear',
+                            min: 0,
+                            max: 10,
+                            title: {
+                                display: true,
+                                text: 'Valor de Negocio (Impacto)'
+                            },
+                            grid: {
+                                color: 'rgba(209, 213, 219, 0.5)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.raw.label;
+                                }
+                            }
+                        },
+                        annotation: {
+                            annotations: {
+                                q1: {
+                                    type: 'box',
+                                    xMin: 0,
+                                    xMax: 5,
+                                    yMin: 5,
+                                    yMax: 10,
+                                    backgroundColor: 'rgba(220, 252, 231, 0.4)',
+                                    borderColor: 'rgba(52, 211, 153, 0.8)',
+                                    borderWidth: 1,
+                                },
+                                q2: {
+                                    type: 'box',
+                                    xMin: 5,
+                                    xMax: 10,
+                                    yMin: 5,
+                                    yMax: 10,
+                                    backgroundColor: 'rgba(255, 237, 213, 0.4)',
+                                    borderColor: 'rgba(251, 191, 36, 0.8)',
+                                    borderWidth: 1,
+                                },
+                                q3: {
+                                    type: 'box',
+                                    xMin: 0,
+                                    xMax: 5,
+                                    yMin: 0,
+                                    yMax: 5,
+                                    backgroundColor: 'rgba(224, 242, 254, 0.4)',
+                                    borderColor: 'rgba(96, 165, 250, 0.8)',
+                                    borderWidth: 1,
+                                },
+                                q4: {
+                                    type: 'box',
+                                    xMin: 5,
+                                    xMax: 10,
+                                    yMin: 0,
+                                    yMax: 5,
+                                    backgroundColor: 'rgba(254, 226, 226, 0.4)',
+                                    borderColor: 'rgba(248, 113, 113, 0.8)',
+                                    borderWidth: 1,
+                                },
+                                text1: {
+                                    type: 'label',
+                                    xValue: 2.5,
+                                    yValue: 7.5,
+                                    content: 'Bajo Esfuerzo, Alto Valor (Quick Wins)',
+                                    font: { size: 14, weight: 'bold' },
+                                    color: '#16a34a'
+                                },
+                                text2: {
+                                    type: 'label',
+                                    xValue: 7.5,
+                                    yValue: 7.5,
+                                    content: 'Alto Esfuerzo, Alto Valor (Proyectos Estratégicos)',
+                                    font: { size: 14, weight: 'bold' },
+                                    color: '#f97316'
+                                },
+                                text3: {
+                                    type: 'label',
+                                    xValue: 2.5,
+                                    yValue: 2.5,
+                                    content: 'Bajo Esfuerzo, Bajo Valor (Distracciones)',
+                                    font: { size: 14, weight: 'bold' },
+                                    color: '#3b82f6'
+                                },
+                                text4: {
+                                    type: 'label',
+                                    xValue: 7.5,
+                                    yValue: 2.5,
+                                    content: 'Alto Esfuerzo, Bajo Valor (Evitar)',
+                                    font: { size: 14, weight: 'bold' },
+                                    color: '#ef4444'
+                                },
+                            }
+                        }
+                    }
+                }
+            });
+
+            const satisfactionData = {
+                labels: ['Ventas/CRM', 'Inventarios', 'Compras', 'Tesorería y Pagos', 'Autogestión B2B'],
+                datasets: [{
+                    label: 'Nivel de Satisfacción (1-5)',
+                    data: [1.5, 2, 3, 2, 1],
+                    backgroundColor: [
+                        'rgba(248, 113, 113, 0.8)',
+                        'rgba(251, 191, 36, 0.8)',
+                        'rgba(96, 165, 250, 0.8)',
+                        'rgba(248, 113, 113, 0.8)',
+                        'rgba(248, 113, 113, 0.8)'
+                    ],
+                    borderColor: [
+                        'rgba(239, 68, 68, 1)',
+                        'rgba(245, 158, 11, 1)',
+                        'rgba(59, 130, 246, 1)',
+                        'rgba(239, 68, 68, 1)',
+                        'rgba(239, 68, 68, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            };
+
+            const satisfactionChart = new Chart(document.getElementById('satisfactionChart'), {
+                type: 'bar',
+                data: satisfactionData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 5,
+                            title: {
+                                display: true,
+                                text: 'Nivel de Satisfacción (1-5)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        });
+    
+
+
+        const estadoLabels = ["Finalizado", "En Progreso", "Estancado", "Bloqueado", "Pendiente"];
+        const estadoValues = [5, 12, 25, 10, 8];
+        const areaLabels = ["Contabilidad", "Compras", "Ventas y CRM", "Inventario", "Gestión"];
+        const areaValues = [15, 10, 8, 5, 5];
+        const timeLabels = ["2024-12-01", "2025-01-01", "2025-02-01", "2025-03-01", "2025-04-01", "2025-05-01"];
+        const timeData = [5, 12, 18, 22, 25, 25];
+
+        // Chart Estado (Donut)
+        new Chart(document.getElementById("chartEstado"), {
+            type: "doughnut",
+            data: {
+                labels: estadoLabels,
+                datasets: [{
+                    data: estadoValues,
+                    backgroundColor: [
+                        "rgba(34, 197, 94, 0.85)",   // Finalizado - Verde
+                        "rgba(59, 130, 246, 0.85)",  // En Progreso - Azul
+                        "rgba(245, 158, 11, 0.85)",  // Estancado - Naranja
+                        "rgba(239, 68, 68, 0.85)",   // Bloqueado - Rojo
+                        "rgba(148, 163, 184, 0.85)"  // Pendiente - Gris
+                    ]
+                }]
+            },
+            options: {
+                plugins: { legend: { position: "bottom" } }
+            }
+        });
+
+        // Chart Área (horizontal)
+        new Chart(document.getElementById("chartArea"), {
+            type: "bar",
+            data: {
+                labels: areaLabels,
+                datasets: [{
+                    label: "Tareas",
+                    data: areaValues,
+                    backgroundColor: "rgba(99, 102, 241, 0.7)"
+                }]
+            },
+            options: {
+                indexAxis: "y",
+                scales: { x: { beginAtZero: true } },
+                plugins: { legend: { display: false } }
+            }
+        });
+
+        // Chart Timeline (acumulado por mes)
+        new Chart(document.getElementById("chartTimeline"), {
+            type: "line",
+            data: {
+                labels: timeLabels,
+                datasets: [{
+                    label: "Tareas abiertas (acumulado)",
+                    data: timeData,
+                    borderColor: "rgba(79, 70, 229, 0.8)",
+                    backgroundColor: "rgba(79, 70, 229, 0.2)",
+                    fill: true,
+                    tension: 0.3
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: { unit: 'month' },
+                        title: { display: true, text: 'Fecha' }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        title: { display: true, text: 'Número de Tareas' }
+                    }
+                }
+            }
+        });
+    
+
+
+        // Datos de la encuesta
+        const totalSent = 19;
+        const responses = [
+            '14:15', '16:30', '17:05', '17:10', '17:20', '17:45', '18:00', '18:30', '19:00', '19:25', '20:10', '21:05', '22:00'
+        ];
+        const responseCountsByHour = responses.reduce((acc, time) => {
+            const hour = parseInt(time.split(':')[0], 10);
+            acc[hour] = (acc[hour] || 0) + 1;
+            return acc;
+        }, {});
+        const labels = Array.from({ length: 24 }, (_, i) => `${i}:00`);
+        const data = labels.map((_, i) => responseCountsByHour[i] || 0);
+
+        // Gráfico de barras
+        const timeCtx = document.getElementById('timeChart').getContext('2d');
+        new Chart(timeCtx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Número de Respuestas',
+                    data: data,
+                    backgroundColor: 'rgba(79, 70, 229, 0.8)',
+                    borderColor: 'rgba(79, 70, 229, 1)',
+                    borderWidth: 1,
+                    borderRadius: 8,
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: { beginAtZero: true },
+                    x: { title: { display: true, text: 'Hora del Día' } }
+                },
+                plugins: { legend: { display: false } }
+            }
+        });
+
+        // Gráfico de línea acumulativo
+        const cumulativeData = data.reduce((acc, count, index) => {
+            if (index === 0) acc.push(count);
+            else acc.push(acc[index - 1] + count);
+            return acc;
+        }, []);
+        const cumulativeCtx = document.getElementById('cumulativeChart').getContext('2d');
+        new Chart(cumulativeCtx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Respuestas Acumulativas',
+                    data: cumulativeData,
+                    borderColor: 'rgba(34, 197, 94, 1)',
+                    backgroundColor: 'rgba(34, 197, 94, 0.2)',
+                    fill: true,
+                    tension: 0.4,
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: { beginAtZero: true },
+                    x: { title: { display: true, text: 'Hora del Día' } }
+                },
+                plugins: { legend: { display: false } }
+            }
+        });
+
+        // Gráfico circular
+        const respondedCount = responses.length;
+        const notRespondedCount = totalSent - respondedCount;
+        const participationCtx = document.getElementById('participationChart').getContext('2d');
+        new Chart(participationCtx, {
+            type: 'pie',
+            data: {
+                labels: ['Respondieron', 'No Respondieron'],
+                datasets: [{
+                    data: [respondedCount, notRespondedCount],
+                    backgroundColor: ['rgba(34, 197, 94, 0.8)', 'rgba(239, 68, 68, 0.8)'],
+                    borderColor: '#ffffff',
+                    borderWidth: 2,
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'top' },
+                    tooltip: {
+                        callbacks: {
+                            label: (context) => {
+                                let label = context.label || '';
+                                if (label) label += ': ';
+                                if (context.parsed !== null) label += context.parsed + ' personas';
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        const participationText = document.getElementById('participationText');
+        participationText.innerHTML = `Respondieron: ${respondedCount} de ${totalSent} personas.`;
+
+        // Datos del gráfico de radar
+        const radarLabels = ['Comunicación', 'Logros', 'Alineación de Expectativas', 'Valor Percibido', 'Resolución de Problemas'];
+        const dataVentas = [2, 1, 3, 2, 1];
+        const dataCompras = [2, 1, 3, 2, 1];
+        const dataTesoreria = [1, 1, 2, 1, 1];
+        const dataManufactura = [1, 1, 1, 1, 1];
+        const dataPartner = [4, 2, 3, 3, 2];
+
+        // Gráfico de radar
+        const radarCtx = document.getElementById('radarChart').getContext('2d');
+        new Chart(radarCtx, {
+            type: 'radar',
+            data: {
+                labels: radarLabels,
+                datasets: [
+                    { label: 'Ventas y CRM', data: dataVentas, backgroundColor: 'rgba(79, 70, 229, 0.4)', borderColor: 'rgba(79, 70, 229, 1)', borderWidth: 2, pointBackgroundColor: 'rgba(79, 70, 229, 1)' },
+                    { label: 'Compras', data: dataCompras, backgroundColor: 'rgba(239, 68, 68, 0.4)', borderColor: 'rgba(239, 68, 68, 1)', borderWidth: 2, pointBackgroundColor: 'rgba(239, 68, 68, 1)' },
+                    { label: 'Tesorería y Pagos', data: dataTesoreria, backgroundColor: 'rgba(34, 197, 94, 0.4)', borderColor: 'rgba(34, 197, 94, 1)', borderWidth: 2, pointBackgroundColor: 'rgba(34, 197, 94, 1)' },
+                    { label: 'Inventario y Proyectos', data: dataManufactura, backgroundColor: 'rgba(245, 158, 11, 0.4)', borderColor: 'rgba(245, 158, 11, 1)', borderWidth: 2, pointBackgroundColor: 'rgba(245, 158, 11, 1)' },
+                    { label: 'Partner (Dooit)', data: dataPartner, backgroundColor: 'rgba(59, 130, 246, 0.4)', borderColor: 'rgba(59, 130, 246, 1)', borderWidth: 2, pointBackgroundColor: 'rgba(59, 130, 246, 1)' }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: { r: { min: 0, max: 5, ticks: { stepSize: 1, showLabelBackdrop: false } } },
+                plugins: { legend: { position: 'bottom' } }
+            }
+        });
+    </script>
+<footer aria-label="Nota de confidencialidad" class="confidential" role="note">
+<strong>Uso interno y confidencial</strong> — Dr. Odoo y Caban. Prohibida su difusión sin autorización expresa.
+</footer>
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  var el = document.getElementById('stakeholderCompareChart');
+  if(!el) return;
+  var labels = ['Comunicación','Logros','Alineación de Expectativas','Valor Percibido','Resolución de Problemas'];
+  var ventas = [2,1,3,2,1];
+  var compras = [2,1,3,2,1];
+  var tesoreria = [1,1,2,1,1];
+  var manufactura = [1,1,1,1,1];
+  var partner = [4,2,3,3,2];
+  // promedio de áreas (sin partner)
+  var avg = labels.map(function(_, i){
+    return (ventas[i] + compras[i] + tesoreria[i] + manufactura[i]) / 4.0;
+  });
+  var ctx = el.getContext('2d');
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [
+        { label: 'Promedio Áreas', data: avg, backgroundColor: 'rgba(99, 102, 241, 0.6)', borderColor: 'rgba(99, 102, 241, 1)', borderWidth: 1 },
+        { label: 'Partner (Dooit)', data: partner, backgroundColor: 'rgba(34, 197, 94, 0.6)', borderColor: 'rgba(34, 197, 94, 1)', borderWidth: 1 }
+      ]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: { beginAtZero: true, max: 5, title: { display: true, text: 'Valoración (1-5)' } }
+      },
+      plugins: {
+        legend: { position: 'top' },
+        tooltip: {
+          callbacks: {
+            label: function(context){
+              return context.dataset.label + ': ' + context.parsed.y.toFixed(2);
+            }
+          }
+        }
+      }
+    }
+  });
+});
+</script></body></html>
