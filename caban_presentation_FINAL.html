@@ -206,15 +206,22 @@
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
         }
         
-        .slide-number {
-            position: absolute;
-            top: 30px;
-            right: 30px;
-            background: rgba(255, 255, 255, 0.8);
-            padding: 10px 20px;
-            border-radius: 20px;
-            font-weight: bold;
-        }
+       .slide-number {
+         
+         position: absolute; /* o: fixed, si quieres que se “pegue” al viewport */
+         bottom: 24px;       /* << mover a abajo */
+         right: 24px;        /* << mantener a la derecha */
+       
+         top: auto;
+         left: auto;
+       
+         background: rgba(255, 255, 255, 0.85);
+         padding: 8px 14px;
+         border-radius: 20px;
+         font-weight: 700;
+         z-index: 1200;      /* menor que tus logos (si están en ~2000) */
+         pointer-events: none; /* no bloquea clics en logos o links */
+       }
         
         .big-number {
             font-size: 4em;
